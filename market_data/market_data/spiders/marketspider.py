@@ -1,5 +1,5 @@
 import scrapy
-
+from market_data.items import IndiceItem
 
 class MarketspiderSpider(scrapy.Spider):
     name = "marketspider"
@@ -28,6 +28,7 @@ class MarketspiderSpider(scrapy.Spider):
         market = response.meta['market'] 
         content_div = response.xpath('/html/body/div[1]/div[2]/div[2]/div/div[1]/div[2]/div/div[2]/div[1]/div')
         
+        indice_item = IndiceItem()
 
         # Index Name
         #indice_name = content_div.css('font[size="1"] span::text').get()
@@ -97,16 +98,18 @@ class MarketspiderSpider(scrapy.Spider):
                 value = cell.css('span:last-child::text').get().strip()
                 summary_data[key] = value 
 
-        yield {
-            'index_abbreviation': market,
-            'indice_name': indice_name,
-            "current_date": current_date,
-            'index_percentage_change': index_percentage_change,
-            'index_value': index_value,
-            'index_change': index_change,
-            'time_periods': time_periods,
-            'market_summary': summary_data
-        }
+        
+        indice_item['index_abbreviation']= market
+        indice_item['indice_name']= indice_name
+        indice_item["current_date"]= current_date
+        indice_item['index_percentage_change'] = index_percentage_change
+        indice_item['index_value'] = index_value
+        indice_item['index_change']= index_change
+        indice_item['time_periods'] = time_periods
+        indice_item['market_summary'] = summary_data
+        
+        yield indice_item
+        
 
         
         

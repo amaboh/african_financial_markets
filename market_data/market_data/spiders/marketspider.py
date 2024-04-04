@@ -19,25 +19,45 @@ class MarketspiderSpider(scrapy.Spider):
                 indice_url = 'https://www.african-markets.com/fr/' + relative_index_url
 
             # Directly use callback=self.parse_indice_page here
-            yield response.follow(indice_url, callback=self.parse_indice_page) 
+            yield response.follow(indice_url, callback=self.parse_indice_page, meta={'market': market}) 
             
     
     def parse_indice_page(self, response):
-        content_div = response.css('div#mod-custom749')
+        
+        # Access market from parse function
+        market = response.meta['market'] 
+        content_div = response.xpath('/html/body/div[1]/div[2]/div[2]/div/div[1]/div[2]/div/div[2]/div[1]/div')
         
 
         # Index Name
-        indice_name = content_div.css('font[size="1"] span::text').get()
+        #indice_name = content_div.css('font[size="1"] span::text').get()
+        
+            ## Option 1: CSS Selector with Error Handling
+        if response.css('h1.page-subtitle small.subheading-category'):  # Check if element exists
+            indice_name = response.css('h1.page-subtitle small.subheading-category::text').get().strip()
+        else:
+            indice_name = "Index Name Not Found"  # Assign a default value
+
+        ## Option 2: XPath Selector with Error Handling
+        if response.xpath('//h1[@class="page-subtitle"]/small[@class="subheading-category"]'):  # Check if element exists
+            indice_name = response.xpath('//h1[@class="page-subtitle"]/small[@class="subheading-category"]/text()').get().strip()
+        else:
+            indice_name = "Index Name Not Found"  # Assign a default value
+        
+        
         
         # Current Date
-        current_date = current_date_text = content_div.css('font[size="1"]::text').get()
-        
+        current_date_text = content_div.css('font[size="1"]::text').get() 
+            
         if current_date_text:
-            # Example: "BSE DOMESTIC COMPANIES INDEX | As of 03-Apr-2024"
-            date_part = current_date_text.split("As of")[-1].strip()  # Get the part after "As of"
+            date_part = current_date_text.split("As of")[-1].strip()
             current_date = date_part
         else:
             current_date = "Date not found"
+
+        ## Option 2: XPath (Alternative)
+        if response.xpath('//font[@size="1"]/text()').get():
+            current_date_text = response.xpath('//font[@size="1"]/text()').get()
 
 
         # Index Value and Change 
@@ -60,7 +80,12 @@ class MarketspiderSpider(scrapy.Spider):
         
         
         # Index Percentage Change
-        index_percentage_change = content_div.css('font > span[style*="color: #ff0000;"]::text').getall()[0].strip()
+      # Index Percentage Change (Updated)
+        index_percentage_change_elements = content_div.css('font > span[style*="color: #ff0000;"]::text').getall()
+        if index_percentage_change_elements: 
+            index_percentage_change = index_percentage_change_elements[0].strip()
+        else:
+            index_percentage_change = "Change not found"  # Default value if no color is present  
 
         # Market Summary Table
         summary_table = response.css('table.tabtable-gr_alterora_elemental_2_grey_1s2')
@@ -73,6 +98,7 @@ class MarketspiderSpider(scrapy.Spider):
                 summary_data[key] = value 
 
         yield {
+            'index_abbreviation': market,
             'indice_name': indice_name,
             "current_date": current_date,
             'index_percentage_change': index_percentage_change,

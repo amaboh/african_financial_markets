@@ -15,12 +15,13 @@ class MarketspiderSpider(scrapy.Spider):
 
             if 'en/' in relative_index_url:
                 indice_url = 'https://www.african-markets.com/' + relative_index_url
+                print(indice_url)
             else:
                 indice_url = 'https://www.african-markets.com/fr/' + relative_index_url
 
             # Directly use callback=self.parse_indice_page here
-            yield response.follow(indice_url, callback=self.parse_indice_page, meta={'market': market}) 
-            
+            yield response.follow(indice_url, callback=self.parse_indice_page, meta={'market': market})
+        
     
     def parse_indice_page(self, response):
         

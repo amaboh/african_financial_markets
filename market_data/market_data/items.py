@@ -20,3 +20,16 @@ class IndiceItem(scrapy.Item):
     index_change = scrapy.Field()
     time_periods = scrapy.Field()
     market_summary = scrapy.Field()
+    pass
+    
+class CompanyItem(scrapy.Item):
+    company_name = scrapy.Field()
+    sector = scrapy.Field()
+    price = scrapy.Field()
+    one_day = scrapy.Field()
+    ytd = scrapy.Field()
+    market_cap = scrapy.Field()
+    date = scrapy.Field()
+    market_name = scrapy.Field()
+    pass
+    

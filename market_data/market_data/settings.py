@@ -64,6 +64,7 @@ ROBOTSTXT_OBEY = True
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    "market_data.pipelines.MarketDataPipeline": 300,
+   "market_data.pipelines.PostgresIndicePipeline": 400,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

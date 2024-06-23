@@ -24,15 +24,32 @@ class CompanyspiderSpider(scrapy.Spider):
     def parse_listed_page(self, response):
         market = response.meta['market'] 
         company_rows = response.css('table.tabtable-rs_01k0jris tbody tr') 
-        for row in company_rows: 
+
+        for row in company_rows:
             company_item = CompanyItem()
             company_item['market_name'] = market
-            company_item['company_name'] = row.css('td.tabcol.col_width_1 a::text').get()
-            company_item['sector'] = row.css('td.tabcol.col_width_2::text').get()
-            company_item['price'] = row.css('td.tabcol.col_width_3::text').get()
-            company_item['one_day'] = row.css('td.tabcol.col_width_4::text').get()
-            company_item['ytd'] = row.css('td.tabcol.col_width_5::text').get()
-            company_item['market_cap'] = row.css('td.tabcol.col_width_6::text').get()
-            company_item['date'] = row.css('td.tabcol.col_width_7::text').get()
+            company_name = row.css('td.col_width_1 a::text').get()
+            company_item['company_name'] = company_name.strip() if company_name else 'N/A'
+            sector = row.css('td.col_width_2::text').get()
+            company_item['sector'] = sector.strip() if sector else 'N/A'
+            price = row.css('td.col_width_3::text').get()
+            company_item['price'] = price.strip() if price else 'N/A'
+
+            # Extract one_day percentage change (checking both font and p tags)
+            one_day = row.css('td.col_width_4 font::text').get()
+            if not one_day:
+                one_day = row.css('td.col_width_4 p::text').get()
+            company_item['one_day'] = one_day.strip() if one_day else 'N/A'
+            
+            # Extract ytd percentage change (checking both font and p tags)
+            ytd = row.css('td.col_width_5 font::text').get()
+            if not ytd:
+                ytd = row.css('td.col_width_5 p::text').get()
+            company_item['ytd'] = ytd.strip() if ytd else 'N/A'
+
+            market_cap = row.css('td.col_width_6::text').get()
+            company_item['market_cap'] = market_cap.strip() if market_cap else 'N/A'
+            date = row.css('td.col_width_7::text').get()
+            company_item['date'] = date.strip() if date else 'N/A'
 
             yield company_item

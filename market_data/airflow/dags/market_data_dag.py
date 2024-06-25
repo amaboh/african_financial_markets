@@ -28,13 +28,13 @@ start_task = DummyOperator(task_id='start', dag=dag)
 
 scrape_indices = BashOperator(
     task_id='scrape_indices',
-    bash_command='cd /opt/airflow/scrapy_project && scrapy crawl marketspider',
+    bash_command='cd /opt/airflow/dags/market_data && scrapy crawl marketspider',
     dag=dag
 )
 
 scrape_companies = BashOperator(
     task_id='scrape_companies',
-    bash_command='cd /opt/airflow/scrapy_project && scrapy crawl companyspider',
+    bash_command='cd /opt/airflow/dags/market_data && scrapy crawl companyspider',
     dag=dag
 )
 

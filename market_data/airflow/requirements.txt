@@ -2,3 +2,5 @@ psycopg2-binary
 scrapy
 apache-airflow-providers-google
 pyarrow
+apache-airflow-providers-postgres
+requests

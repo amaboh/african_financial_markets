@@ -20,9 +20,9 @@ class MarketDataPipeline:
 class PostgresPipeline:
     def __init__(self):
         hostname = 'localhost'
-        username = 'ama'
-        password = 'password'
-        database = 'african_financial_markets'
+        username = 'airflow'
+        password = 'airflow'
+        database = 'ingest_db'
         self.conn = psycopg2.connect(host=hostname, user=username, password=password, dbname=database)
         self.curr = self.conn.cursor()
         self.create_indices_table()

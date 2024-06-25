@@ -1,7 +1,7 @@
-# Use the official Apache Airflow image
-FROM apache/airflow:2.9.2
+FROM apache/airflow:2.9.1
 
-# Ensure bash shell with correct options
+USER root
+
 SHELL ["/bin/bash", "-o", "pipefail", "-e", "-u", "-x", "-c"]
 
 # Install necessary system dependencies
@@ -11,12 +11,13 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements.txt and install Python dependencies
+# Copy requirements.txt and install dependencies
 COPY requirements.txt /opt/airflow/requirements.txt
-
-# Install Python dependencies
-RUN pip install --no-cache-dir -r /opt/airflow/requirements.txt
+RUN chown airflow:root /opt/airflow/requirements.txt
+USER airflow
+RUN pip install -r /opt/airflow/requirements.txt
 
 # Copy dags and plugins
-COPY  dags/ /opt/airflow/dags/
-COPY  plugins/ /opt/airflow/plugins/
+COPY dags/ /opt/airflow/dags/
+COPY plugins/ /opt/airflow/plugins/
+

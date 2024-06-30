@@ -19,7 +19,7 @@ class MarketDataPipeline:
 
 class PostgresPipeline:
     def __init__(self):
-        hostname = 'localhost'
+        hostname = 'postgres'
         username = 'airflow'
         password = 'airflow'
         database = 'ingest_db'

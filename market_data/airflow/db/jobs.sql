@@ -1,9 +1,11 @@
- -- Create indices table
+-- Create indices table
+-- Create ingest database
+
 CREATE SCHEMA IF NOT EXISTS market_data;
 
-CREATE TABLE IF NOT EXISTS indices (
+CREATE TABLE IF NOT EXISTS market_data.indices (
     id SERIAL PRIMARY KEY,
-    current_date TEXT,
+    "current_date" TEXT,
     index_abbreviation TEXT,
     index_change NUMERIC,
     index_percentage_change NUMERIC,
@@ -13,9 +15,8 @@ CREATE TABLE IF NOT EXISTS indices (
     time_periods JSONB
 );
 
-
 -- Create companies table
-CREATE TABLE IF NOT EXISTS companies (
+CREATE TABLE IF NOT EXISTS market_data.companies (
     id SERIAL PRIMARY KEY,
     company_name VARCHAR(255),
     sector VARCHAR(255),
@@ -26,4 +27,3 @@ CREATE TABLE IF NOT EXISTS companies (
     date TEXT,
     market_name VARCHAR(255)
 );
-

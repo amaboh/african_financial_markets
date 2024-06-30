@@ -1,9 +1,13 @@
 FROM postgres:13
-COPY jobs.sql /usr/local/bin/jobs.sql
-COPY custom-entrypoint.sh /usr/local/bin/custom-entrypoint.sh
-ENV PGHOST localhost
-ENV PGUSER airflow
-ENV PGPASSWORD airflow
-ENV POSTGRES_INGEST_DB ingest_db
+
+ENV POSTGRES_USER=airflow \
+    POSTGRES_PASSWORD=airflow \
+    POSTGRES_DB=airflow \
+    POSTGRES_INGEST_DB=ingest_db
+
+COPY custom-entrypoint.sh /usr/local/bin/
+COPY jobs.sql /usr/local/bin/
+
 RUN chmod +x /usr/local/bin/custom-entrypoint.sh
+
 ENTRYPOINT ["/usr/local/bin/custom-entrypoint.sh"]

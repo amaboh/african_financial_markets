@@ -11,6 +11,12 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Install GCP SDK
+RUN curl -sSL https://sdk.cloud.google.com | bash
+
+ENV PATH $PATH:/root/google-cloud-sdk/bin
+ENV AIRFLOW__DATABASE__SQL_ALCHEMY_CONN postgresql+psycopg2://airflow:airflow@postgres/airflow
+
 # Copy requirements.txt and install dependencies
 COPY requirements.txt /opt/airflow/requirements.txt
 RUN chown airflow:root /opt/airflow/requirements.txt

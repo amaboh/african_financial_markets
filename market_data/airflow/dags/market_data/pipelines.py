@@ -25,10 +25,11 @@ class PostgresPipeline:
         database = 'ingest_db'
         self.conn = psycopg2.connect(host=hostname, user=username, password=password, dbname=database)
         self.curr = self.conn.cursor()
+        self.create_schema()
         self.create_indices_table()
         self.create_companies_table()
         self.insert_indice_statement = """
-            INSERT INTO indices (
+            INSERT INTO market_data.indices (
                 "current_date", 
                 index_abbreviation,
                 index_change,  
@@ -40,7 +41,7 @@ class PostgresPipeline:
             ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
         self.insert_company_statement = """
-            INSERT INTO companies (
+            INSERT INTO market_data.companies (
                 company_name,
                 sector,
                 price,
@@ -52,9 +53,14 @@ class PostgresPipeline:
             ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
 
+    def create_schema(self):
+        create_schema_statement = "CREATE SCHEMA IF NOT EXISTS market_data"
+        self.curr.execute(create_schema_statement)
+        self.conn.commit()
+        
     def create_indices_table(self):
         create_table_statement = """
-            CREATE TABLE IF NOT EXISTS indices (
+            CREATE TABLE IF NOT EXISTS market_data.indices (
                 id SERIAL PRIMARY KEY,
                 "current_date" TEXT,
                 index_abbreviation TEXT,
@@ -71,7 +77,7 @@ class PostgresPipeline:
 
     def create_companies_table(self):
         create_table_statement = """
-            CREATE TABLE IF NOT EXISTS companies (
+            CREATE TABLE IF NOT EXISTS market_data.companies (
                 id SERIAL PRIMARY KEY,
                 company_name VARCHAR(255),
                 sector VARCHAR(255),

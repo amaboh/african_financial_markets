@@ -4,3 +4,5 @@ apache-airflow-providers-google
 pyarrow
 apache-airflow-providers-postgres
 requests
+google-cloud-storage
+google-cloud-bigquery
